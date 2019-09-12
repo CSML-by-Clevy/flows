@@ -1,0 +1,57 @@
+flow("find a course")
+start:
+    say Typing(1000)
+    say "Hello, I am your assistant to browse through Github."
+    if (githubSearchLanguage) goto checkLastCourse
+    else goto query
+
+checkLastCourse:
+    ask {
+        say Typing(2000)
+        say Question(
+            title = "Do you want me to show your the results for your last search ? It was about {{githubSearchQuery}} ({{githubSearchLanguage}})",
+            buttons = [Button("Yes please 😎"), Button("No, I need something else")]
+        )
+    } response {
+        if (event == "Yes please 😎") goto result
+        else goto query
+    }
+
+query:
+    ask {
+        say Typing(1000)
+        say "Whats your query ?"
+    } response {
+        remember event as githubSearchQuery
+        goto language
+    }
+
+language:
+    ask {
+        say Typing(1000)
+        say "Which language ?"
+    } response {
+        remember event as githubSearchLanguage
+        goto result
+    }
+
+result:
+    say Typing(2000)
+    say "Here are three results for you"
+    use "https://api.github.com/search/repositories?q={{githubSearchQuery}}+language:{{githubSearchLanguage}}&sort=stars&order=des" as url
+    use Fn("Github", url=url) as queryResult
+    use queryResult.items as items
+    use items[0] as firstRepo
+    use items[1] as secondRepo
+    use items[2] as thirdRepo
+    say Typing(2000)
+    say "1️⃣ {{firstRepo.full_name}} - {{firstRepo.description}}"
+    say Url(firstRepo.html_url)
+    say Typing(3000)
+    say "2️⃣ {{secondRepo.full_name}} - {{secondRepo.description}}"
+    say Url(secondRepo.html_url)
+    say Typing(3000)
+    say "3️⃣ {{thirdRepo.full_name}} - {{thirdRepo.description}}"
+    say Url(thirdRepo.html_url)
+    goto end
+

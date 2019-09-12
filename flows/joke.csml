@@ -8,7 +8,7 @@ joke:
     use Button("Not really 😱") as btno
     ask {
         say Typing(2000)
-        use Fn("SimpleGetHttpRequest", url="https://official-joke-api.appspot.com/random_joke") as newjoke 
+        use Fn("get_api", url="https://official-joke-api.appspot.com/random_joke") as newjoke
         say newjoke.setup
         say Typing(1500)
         say newjoke.punchline
@@ -28,7 +28,7 @@ joke:
             goto jokeanyway
         }
     }
-    
+
 jokeanyway:
     say "I am not sure to know what you mean, so here's a joke anyway."
     goto joke

@@ -1,4 +1,3 @@
-flow("joke")
 start:
     say "Hello, here's a good joke for you."
 	goto joke

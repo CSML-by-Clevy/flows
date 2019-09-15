@@ -5,4 +5,7 @@
 
 # Parameters
 
-- url: String
+- action: "trending|search"
+- period: "week|month" (apply for trending request only)
+- query: String (apply for search request only)
+- language: "python|java|..." (apply for search request only)

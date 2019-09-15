@@ -1,20 +1,53 @@
-flow("find a course")
 start:
     say Typing(1000)
     say "Hello, I am your assistant to browse through Github."
-    if (githubSearchLanguage) goto checkLastCourse
-    else goto query
+    goto searchOrTrending
 
-checkLastCourse:
+searchOrTrending:
     ask {
-        say Typing(2000)
+        say Typing(500)
         say Question(
-            title = "Do you want me to show your the results for your last search ? It was about {{githubSearchQuery}} ({{githubSearchLanguage}})",
-            buttons = [Button("Yes please 😎"), Button("No, I need something else")]
+            title = "Do you want to check out the trending repos or search for specific ones ?",
+            buttons = [Button("Trending 🌟"),
+                Button("Show me my last search"),
+                Button("New search query")]
         )
     } response {
-        if (event == "Yes please 😎") goto result
+        if (event == "Trending 🌟") goto trending
+        else if (event == "Show me my last search") goto lastSearch
         else goto query
+    }
+
+trending:
+    ask {
+        say Typing(500)
+        say Question(
+            title = "Do you want me to show you the trending repos that were created over last month or last week ?",
+            buttons = [Button("Last month"),
+                Button("Last week")]
+        )
+    } response {
+        if (event == "Last month") {
+            say "Here are last month trending repos :"
+            remember "month" as period
+        } else {
+            say "Here are last week trending repos :"
+            remember "week" as period
+        }
+        use Fn("Github", action="trending", period=period) as queryResult
+        foreach (repo) in queryResult {
+            say Typing(2000)
+            say "{{repo.full_name}} - ⭐️{{repo.stargazers_count}} ⭐️ - {{repo.language}} - {{repo.description}}"
+            say Url(repo.html_url)
+        }
+        goto end
+    }
+
+lastSearch:
+    if (githubSearchLanguage) goto resultSearch
+    else {
+        say "It is actually the first time we talk so tell me what you need."
+        goto query
     }
 
 query:
@@ -32,26 +65,17 @@ language:
         say "Which language ?"
     } response {
         remember event as githubSearchLanguage
-        goto result
+        goto resultSearch
     }
 
-result:
+resultSearch:
     say Typing(2000)
-    say "Here are three results for you"
-    use "https://api.github.com/search/repositories?q={{githubSearchQuery}}+language:{{githubSearchLanguage}}&sort=stars&order=des" as url
-    use Fn("Github", url=url) as queryResult
-    use queryResult.items as items
-    use items[0] as firstRepo
-    use items[1] as secondRepo
-    use items[2] as thirdRepo
-    say Typing(2000)
-    say "1️⃣ {{firstRepo.full_name}} - {{firstRepo.description}}"
-    say Url(firstRepo.html_url)
-    say Typing(3000)
-    say "2️⃣ {{secondRepo.full_name}} - {{secondRepo.description}}"
-    say Url(secondRepo.html_url)
-    say Typing(3000)
-    say "3️⃣ {{thirdRepo.full_name}} - {{thirdRepo.description}}"
-    say Url(thirdRepo.html_url)
+    say "Here are the results for you"
+    use Fn("Github", action="search", query=githubSearchQuery, language=githubSearchLanguage) as queryResult
+    foreach (repo) in queryResult {
+        say Typing(2000)
+        say "{{repo.full_name}} - {{repo.description}}"
+        say Url(repo.html_url)
+    }
     goto end
 

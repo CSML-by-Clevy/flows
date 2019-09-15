@@ -38,4 +38,10 @@ jokeoftheday:
     say newjoke.punchline
     goto end
 
+songoftheday:
+    say "Available soon"
+    goto end
 
+todayweather:
+    say "Available soon"
+    goto end

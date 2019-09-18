@@ -14,7 +14,7 @@ hereIsACat:
         ])
         use Fn("get_api", url="https://aws.random.cat/meow") as newCat
         say Image(newCat.file)
-        say "Just say 'stop' If you got enough cat for the day"
+        say "Just say 'stop' If you got enough cat for the day, or type anything to continue."
     } response {
         if (event == "stop" || event == "Stop") goto stop
         else goto hereIsACat

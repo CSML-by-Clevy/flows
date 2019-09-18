@@ -1,9 +1,9 @@
 start:
-    say "Hello, here's a good joke for you."
-	goto joke
+    say "Here's a good joke for you."
+    goto joke
 
 joke:
-    use Button("Hilarious ! 😂") as btyes
+    use Button("Hilarious! 😂") as btyes
     use Button("Not really 😱") as btno
     ask {
         say Typing(2000)
@@ -12,7 +12,7 @@ joke:
         say Typing(1500)
         say newjoke.punchline
         say Question(
-            title="How funny was this joke ?",
+            title="How funny was this joke?",
             buttons=[btyes, btno]
         )
     } response {
@@ -21,7 +21,7 @@ joke:
             say Image("https://media.giphy.com/media/Z9OGuQyrfHAE8/giphy.gif")
             goto end
         } else if (event match btno) {
-            say "Here is an other one !"
+            say "Here is another one!"
             goto joke
         } else {
             goto jokeanyway
@@ -29,6 +29,6 @@ joke:
     }
 
 jokeanyway:
-    say "I am not sure to know what you mean, so here's a joke anyway."
+    say "I'm not sure I know what you mean, so here's a joke anyway."
     goto joke
 

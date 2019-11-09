@@ -10,7 +10,7 @@ searchOrTrending:
 
   say Typing(500)
   say Question(
-    title = "Do you want to check out the trending repos or search for specific ones ?",
+    title = "Do you want to check out the trending repos or search for specific ones?",
     buttons = [btntrending, btnlast, btnnew]
   )
   hold
@@ -26,17 +26,17 @@ trending:
 
   say Typing(500)
   say Question(
-    title = "Do you want me to show you the trending repos that were created over last month or last week ?",
+    title = "Do you want me to show you the trending repos that were created over last month or last week?",
     buttons = [btnweek, btnmonth]
   )
   hold
 
   if (event match btnmonth) {
-    say "Here are last month's trending repos :"
+    say "Here are last month's trending repos:"
     remember "month" as period
   }
   else if (event match btnweek) {
-    say "Here are last week's trending repos :"
+    say "Here are last week's trending repos:"
     remember "week" as period
   }
   else {
@@ -47,8 +47,7 @@ trending:
   use Fn("Github", action="trending", period=period) as queryResult
   foreach (repo) in queryResult {
     say Typing(2000)
-    say "{{repo.full_name}} - ⭐️{{repo.stargazers_count}} ⭐️ - {{repo.language}} - {{repo.description}}"
-    say Url(repo.html_url)
+    say "[{{repo.full_name}}](repo.html_url) - ⭐️{{repo.stargazers_count}} ⭐️ - {{repo.language}} - {{repo.description}}"
   }
   goto end
 
@@ -61,7 +60,7 @@ lastSearch:
 
 query:
   say Typing(1000)
-  say "Whats your query ?"
+  say "Whats your query?"
   hold
 
   remember event as githubSearchQuery
@@ -69,7 +68,7 @@ query:
 
 language:
   say Typing(1000)
-  say "Which language ?"
+  say "Which language?"
   hold
 
   remember event as githubSearchLanguage
@@ -77,12 +76,11 @@ language:
 
 resultSearch:
   say Typing(2000)
-  say "Here are the results for you"
+  say "Here are the results we found for for you:"
   use Fn("Github", action="search", query=githubSearchQuery, language=githubSearchLanguage) as queryResult
   foreach (repo) in queryResult {
     say Typing(2000)
-    say "{{repo.full_name}} - {{repo.description}}"
-    say Url(repo.html_url)
+    say "[{{repo.full_name}}](repo.html_url) - {{repo.description}}"
   }
   goto end
 

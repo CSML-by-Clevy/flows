@@ -1,81 +1,88 @@
 start:
-    say Typing(1000)
-    say "Hello, I am your assistant to browse through Github."
-    goto searchOrTrending
+  say Typing(1000)
+  say "Hello, I am your assistant to browse through Github."
+  goto searchOrTrending
 
 searchOrTrending:
-    ask {
-        say Typing(500)
-        say Question(
-            title = "Do you want to check out the trending repos or search for specific ones ?",
-            buttons = [Button("Trending 🌟"),
-                Button("Show me my last search"),
-                Button("New search query")]
-        )
-    } response {
-        if (event == "Trending 🌟") goto trending
-        else if (event == "Show me my last search") goto lastSearch
-        else goto query
-    }
+  use Button("Trending 🌟") as btntrending
+  use Button("Show me my last search") as btnlast
+  use Button("New search query") as btnnew
+
+  say Typing(500)
+  say Question(
+    title = "Do you want to check out the trending repos or search for specific ones ?",
+    buttons = [btntrending, btnlast, btnnew]
+  )
+  hold
+
+  if (event match btntrending) goto trending
+  else if (event match btnlast) goto lastSearch
+  else if (event match btnnew) goto query
+  goto searchOrTrending
 
 trending:
-    ask {
-        say Typing(500)
-        say Question(
-            title = "Do you want me to show you the trending repos that were created over last month or last week ?",
-            buttons = [Button("Last month"),
-                Button("Last week")]
-        )
-    } response {
-        if (event == "Last month") {
-            say "Here are last month trending repos :"
-            remember "month" as period
-        } else {
-            say "Here are last week trending repos :"
-            remember "week" as period
-        }
-        use Fn("Github", action="trending", period=period) as queryResult
-        foreach (repo) in queryResult {
-            say Typing(2000)
-            say "{{repo.full_name}} - ⭐️{{repo.stargazers_count}} ⭐️ - {{repo.language}} - {{repo.description}}"
-            say Url(repo.html_url)
-        }
-        goto end
-    }
+  use Button("Last month") as btnmonth
+  use Button("Last week") as btnweek
+
+  say Typing(500)
+  say Question(
+    title = "Do you want me to show you the trending repos that were created over last month or last week ?",
+    buttons = [btnweek, btnmonth]
+  )
+  hold
+
+  if (event match btnmonth) {
+    say "Here are last month's trending repos :"
+    remember "month" as period
+  }
+  else if (event match btnweek) {
+    say "Here are last week's trending repos :"
+    remember "week" as period
+  }
+  else {
+    say "I'm sorry, I didn't get that"
+    goto trending
+  }
+
+  use Fn("Github", action="trending", period=period) as queryResult
+  foreach (repo) in queryResult {
+    say Typing(2000)
+    say "{{repo.full_name}} - ⭐️{{repo.stargazers_count}} ⭐️ - {{repo.language}} - {{repo.description}}"
+    say Url(repo.html_url)
+  }
+  goto end
 
 lastSearch:
-    if (githubSearchLanguage) goto resultSearch
-    else {
-        say "It is actually the first time we talk so tell me what you need."
-        goto query
-    }
+  if (githubSearchLanguage) goto resultSearch
+  else {
+    say "It is actually the first time we talk so tell me what you need."
+    goto query
+  }
 
 query:
-    ask {
-        say Typing(1000)
-        say "Whats your query ?"
-    } response {
-        remember event as githubSearchQuery
-        goto language
-    }
+  say Typing(1000)
+  say "Whats your query ?"
+  hold
+
+  remember event as githubSearchQuery
+  goto language
 
 language:
-    ask {
-        say Typing(1000)
-        say "Which language ?"
-    } response {
-        remember event as githubSearchLanguage
-        goto resultSearch
-    }
+  say Typing(1000)
+  say "Which language ?"
+  hold
+
+  remember event as githubSearchLanguage
+  goto resultSearch
 
 resultSearch:
+  say Typing(2000)
+  say "Here are the results for you"
+  use Fn("Github", action="search", query=githubSearchQuery, language=githubSearchLanguage) as queryResult
+  foreach (repo) in queryResult {
     say Typing(2000)
-    say "Here are the results for you"
-    use Fn("Github", action="search", query=githubSearchQuery, language=githubSearchLanguage) as queryResult
-    foreach (repo) in queryResult {
-        say Typing(2000)
-        say "{{repo.full_name}} - {{repo.description}}"
-        say Url(repo.html_url)
-    }
-    goto end
+    say "{{repo.full_name}} - {{repo.description}}"
+    say Url(repo.html_url)
+  }
+  goto end
 

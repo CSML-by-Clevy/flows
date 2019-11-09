@@ -5,13 +5,13 @@ start:
 
 searchOrTrending:
   use Button("Trending 🌟") as btntrending
-  use Button("Show me my last search") as btnlast
   use Button("New search query") as btnnew
+  use Button("Show me my last search") as btnlast
 
   say Typing(500)
   say Question(
     title = "Do you want to check out the trending repos or search for specific ones?",
-    buttons = [btntrending, btnlast, btnnew]
+    buttons = [btntrending, btnnew, btnlast]
   )
   hold
 
@@ -83,4 +83,3 @@ resultSearch:
     say "[{{repo.full_name}}](repo.html_url) - {{repo.description}}"
   }
   goto end
-

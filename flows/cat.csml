@@ -1,25 +1,24 @@
 start:
-    say Typing(500)
-    say "So I heard you like cat 🐱"
-    goto hereIsACat
+  say Typing(500)
+  say "So I heard you like cat 🐱"
+  goto hereIsACat
 
 hereIsACat:
-    ask {
-        say Typing(500)
-        say OneOf([
-            "Here is a cat for you !",
-            "CAAAAAAAAAAAAAAT!",
-            "How cute is this one ?",
-            "I love cat too you know..."
-        ])
-        use Fn("get_api", url="https://aws.random.cat/meow") as newCat
-        say Image(newCat.file)
-        say "Just say 'stop' If you got enough cat for the day, or type anything to continue."
-    } response {
-        if (event == "stop" || event == "Stop") goto stop
-        else goto hereIsACat
-    }
+  say Typing(500)
+  say OneOf([
+    "Here is a cat for you !",
+    "CAAAAAAAAAAAAAAT!",
+    "How cute is this one ?",
+    "I love cat too you know..."
+  ])
+  use Fn("get_api", url="https://aws.random.cat/meow") as newCat
+  say Image(newCat.file)
+  say "Just say 'stop' If you got enough cat for the day, or type anything to continue."
+  hold
+
+  if (event == "stop" || event == "Stop") goto stop
+  else goto hereIsACat
 
 stop:
-    say Image("https://i.chzbgr.com/full/7415667712/hE7B47A09/")
-    goto end
+  say Image("https://i.chzbgr.com/full/7415667712/hE7B47A09/")
+  goto end

@@ -76,7 +76,7 @@ language:
 
 resultSearch:
   say Typing(2000)
-  say "Here are the results we found for for you:"
+  say "Here are the results we found for you in {{githubSearchLanguage}}:"
   use Fn("Github", action="search", query=githubSearchQuery, language=githubSearchLanguage) as queryResult
   foreach (repo) in queryResult {
     say Typing(2000)
